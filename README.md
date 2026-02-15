@@ -25,13 +25,14 @@ This is the **backend API** for TZ Tourism platform - providing GPS-accurate dat
 **Backend API Structure:**
 ```
 tz-tourism/
-├── attractions/      # Attractions app (models, views, serializers)
-├── regions/          # Regions app
-├── weather/          # Weather integration (Open-Meteo)
-├── tour_api/         # Main API configuration & settings
-├── manage.py         # Django management script
-├── docs/             # API documentation
-└── legal/            # Terms, Privacy, Moderation policies
+├── src/
+│   ├── attractions/      # Attractions app (models, views, serializers)
+│   ├── regions/          # Regions app
+│   ├── weather/          # Weather integration (Open-Meteo)
+│   ├── cofig/         # Main API configuration & settings
+│   └── manage.py         # Django management script
+├── docs/                 # API documentation
+└── legal/                # Terms, Privacy, Moderation policies
 ```
 
 ### **Core Features:**
@@ -72,16 +73,16 @@ cp .env.example .env
 # Edit .env with your database credentials and API keys
 
 # Run migrations
-python manage.py migrate
+python src/manage.py migrate
 
 # Create superuser
-python manage.py createsuperuser
+python src/manage.py createsuperuser
 
 # Load initial data (optional)
-python manage.py loaddata initial_data.json
+python src/manage.py loaddata initial_data.json
 
 # Start development server
-python manage.py runserver
+python src/manage.py runserver
 ```
 
 **API runs at:** `http://localhost:8000/api/v1/`  
@@ -148,16 +149,16 @@ python manage.py runserver
 
 ```bash
 # Run all tests
-pytest
+pytest src/
 
 # Run with coverage
-pytest --cov=.
+pytest --cov=src
 
 # Run specific test file
-pytest attractions/tests.py
+pytest src/attractions/tests.py
 
 # Run with verbose output
-pytest -v
+pytest -v src/
 ```
 
 ---
