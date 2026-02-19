@@ -268,7 +268,7 @@ These Terms, along with the Privacy Policy and other referenced policies, consti
 
 **Questions about these Terms?**
 
-📧 Email: <i>Comming soon</i>  
+📧 Email: cf89615f228bb45cc805447510de802dfb4bae17@proton.me
 📝 Issues: [GitHub Issues](https://github.com/cleven12/tz-tourism/issues)
 
 ---

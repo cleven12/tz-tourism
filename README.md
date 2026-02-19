@@ -12,7 +12,7 @@
 
 ---
 
-## 🎯 About
+## About
 
 This is the **backend API** for TZ Tourism platform - providing GPS-accurate data for Tanzania's tourist attractions, real-time weather information, and comprehensive REST API for developers.
 
@@ -20,7 +20,7 @@ This is the **backend API** for TZ Tourism platform - providing GPS-accurate dat
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 **Backend API Structure:**
 ```
@@ -36,18 +36,18 @@ tz-tourism/
 ```
 
 ### **Core Features:**
-- 🔌 RESTful API with Django REST Framework
-- 🗄️ PostgreSQL/MySQL database support
-- 🌤️ Real-time weather integration (Open-Meteo API)
-- 🔐 JWT authentication
-- 📍 GPS-accurate location data
-- 📊 Historical weather patterns
-- ✅ Content moderation system
-- 📖 OpenAPI/Swagger documentation
+- RESTful API with Django REST Framework
+- PostgreSQL/MySQL database support
+- Real-time weather integration (Open-Meteo API)
+- JWT authentication
+- GPS-accurate location data
+- Historical weather patterns
+- Content moderation system
+- OpenAPI/Swagger documentation
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### **Prerequisites**
 - Python 3.10+
@@ -91,7 +91,7 @@ python src/manage.py runserver
 
 ---
 
-## 📚 API Endpoints
+## API Endpoints
 
 ### **Core Endpoints**
 
@@ -145,7 +145,7 @@ python src/manage.py runserver
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -163,7 +163,7 @@ pytest -v src/
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework:** Django 4.2+ / Django REST Framework 3.14+
 - **Database:** PostgreSQL (production) / SQLite (dev)
@@ -177,22 +177,22 @@ pytest -v src/
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 ### **For API Consumers:**
-- 🔌 RESTful design with predictable endpoints
-- 📖 Comprehensive OpenAPI documentation
-- 🔑 JWT authentication support
-- 🚀 Fast response times with database optimization
-- 📊 Pagination & filtering support
-- 🆓 Free & open-source
+- RESTful design with predictable endpoints
+- Comprehensive OpenAPI documentation
+- JWT authentication support
+- Fast response times with database optimization
+- Pagination & filtering support
+- Free & open-source
 
 ### **For Developers:**
-- 🧪 Well-tested codebase (pytest)
-- 📝 Clear code structure & documentation
-- 🔧 Easy to extend with Django apps
-- 🐳 Docker support (coming soon)
-- 🔄 CI/CD with GitHub Actions
+- Well-tested codebase (pytest)
+- Clear code structure & documentation
+- Easy to extend with Django apps
+- Docker support (coming soon)
+- CI/CD with GitHub Actions
 
 ---
 
@@ -212,41 +212,41 @@ We welcome contributions! Here's how to help:
 8. Open a Pull Request
 
 ### **Contribution Ideas:**
-- 🗺️ Add new attractions
-- 🐛 Fix bugs
-- 📖 Improve documentation
-- 🧪 Add tests
-- ✨ Propose new features
-- 🌐 Add translations
+- Add new attractions
+- Fix bugs
+- Improve documentation
+- Add tests
+- Propose new features
+- Add translations
 
 **Read:** [CONTRIBUTING.md](CONTRIBUTING.md) | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ---
 
-## 📊 Project Status
+## Project Status
 
 ### **Current Features:**
-- ✅ Core attraction database models
-- ✅ REST API with DRF
-- ✅ Real-time weather integration
-- ✅ JWT authentication
-- ✅ Admin panel
-- ✅ Content moderation system
-- ✅ OpenAPI documentation
+- Core attraction database models
+- REST API with DRF
+- Real-time weather integration
+- JWT authentication
+- Admin panel
+- Content moderation system
+- OpenAPI documentation
 
 ### **Roadmap:**
-- ⏳ User reviews API
-- ⏳ Tour operator directory
-- ⏳ Image upload & management
-- ⏳ Advanced search & filters
-- ⏳ Rate limiting & caching
-- ⏳ Docker containerization
-- ⏳ GraphQL API (optional)
-- ⏳ Multi-language support
+- User reviews API
+- Tour operator directory
+- Image upload & management
+- Advanced search & filters
+- Rate limiting & caching
+- Docker containerization
+- GraphQL API (optional)
+- Multi-language support
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -278,7 +278,7 @@ JWT_REFRESH_TOKEN_LIFETIME=1440  # minutes (24 hours)
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 - [API Documentation](docs/API.md)
 - [Contributing Guide](CONTRIBUTING.md)
@@ -289,7 +289,7 @@ JWT_REFRESH_TOKEN_LIFETIME=1440  # minutes (24 hours)
 
 ---
 
-## ⚠️ Disclaimers
+## Disclaimers
 
 This API provides data **for planning purposes only**.
 
@@ -308,7 +308,7 @@ This API provides data **for planning purposes only**.
 
 ---
 
-## 📜 License
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.
 
@@ -316,7 +316,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## 🌍 About
+## About
 
 Built to provide **honest, accurate tourism data** for Tanzania through an open, well-documented API.
 
@@ -326,11 +326,11 @@ Built to provide **honest, accurate tourism data** for Tanzania through an open,
 
 ---
 
-## 📬 Contact
+## Contact
 
 - **Issues:** [GitHub Issues](https://github.com/cleven12/tz-tourism/issues)
-- **Email:** your.email@example.com
-- **API Support:** api@tz-tourism.com
+- **Email:** cf89615f228bb45cc805447510de802dfb4bae17@proton.me
+- **API Support:** cf89615f228bb45cc805447510de802dfb4bae17@proton.me
 
 ---
 
