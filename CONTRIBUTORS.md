@@ -6,7 +6,7 @@ We're building an open platform to provide honest, accurate tourism information 
 
 ---
 
-## 🌟 Ways to Contribute
+## Ways to Contribute
 
 ### **1. Add New Attractions**
 Know a beautiful place in Tanzania? Share it!
@@ -86,7 +86,7 @@ Have ideas for improvement?
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### **For Non-Developers (Content Contributors)**
 
@@ -221,7 +221,7 @@ Then:
 
 ---
 
-## 📋 Pull Request Guidelines
+## Pull Request Guidelines
 
 ### **Before Submitting:**
 - [ ] Code follows project style
@@ -247,7 +247,7 @@ Then:
 
 ---
 
-## 🎨 Code Style Guidelines
+## Code Style Guidelines
 
 ### **Python (Backend)**
 - Follow PEP 8
@@ -305,7 +305,7 @@ const WeatherCard: React.FC = ({ data }) => {
 
 ---
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### **Backend Tests (pytest)**
 ```python
@@ -335,7 +335,7 @@ describe('WeatherCard', () => {
 
 ---
 
-## 📊 Database Changes
+## Database Changes
 
 If your PR includes database changes:
 
@@ -356,7 +356,7 @@ python manage.py migrate --fake-initial  # Test rollback
 
 ---
 
-## 🔐 Content Moderation Guidelines
+## Content Moderation Guidelines
 
 When adding attractions or reviewing submissions:
 
@@ -375,7 +375,7 @@ When adding attractions or reviewing submissions:
 - Duplicate submission
 - Offensive content
 
-### **⚠️ Request Changes if:**
+### **Request Changes if:**
 - Missing required information
 - Coordinates seem wrong
 - Description needs improvement
@@ -383,7 +383,7 @@ When adding attractions or reviewing submissions:
 
 ---
 
-## 🌍 Translation Guidelines
+## Translation Guidelines
 
 We welcome translations to make the platform accessible:
 
@@ -406,7 +406,7 @@ We welcome translations to make the platform accessible:
 
 ---
 
-## 💬 Community Guidelines
+## Community Guidelines
 
 ### **Be Respectful:**
 - Use inclusive language
@@ -435,7 +435,7 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details.
 
 ---
 
-## 🏆 Recognition
+## Recognition
 
 Contributors are recognized in:
 - README.md (Contributors section)
@@ -452,7 +452,7 @@ Contributors are recognized in:
 
 ---
 
-## 📞 Need Help?
+## Need Help?
 
 **Questions about contributing?**
 - Open a [Discussion](https://github.com/cleven12/tz-tourism/discussions)
@@ -466,7 +466,7 @@ Contributors are recognized in:
 
 ---
 
-## 📚 Resources
+## Resources
 
 **Learning Resources:**
 - [Django Tutorial](https://docs.djangoproject.com/en/stable/intro/tutorial01/)
