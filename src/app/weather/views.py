@@ -2,12 +2,18 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from app.attractions.models import Attraction
 from .models import WeatherCache, SeasonalWeatherPattern
 from .serializers import WeatherCacheSerializer, SeasonalWeatherPatternSerializer, CurrentWeatherSerializer
 from .services import WeatherService
 
 
+@extend_schema(
+    tags=['Weather'],
+    summary='List cached weather data',
+    description='Returns all cached weather records stored in the database.',
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def weather_list(request):
@@ -16,6 +22,11 @@ def weather_list(request):
     return Response(serializer.data)
 
 
+@extend_schema(
+    tags=['Weather'],
+    summary='Get cached weather by ID',
+    description='Retrieve a single cached weather record by its primary key.',
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def weather_detail(request, pk):
@@ -27,6 +38,20 @@ def weather_detail(request, pk):
     return Response(serializer.data)
 
 
+@extend_schema(
+    tags=['Weather'],
+    summary='Current weather',
+    description=(
+        'Fetch live current weather for a location. Provide either:\n'
+        '- `lat` and `lon` (decimal coordinates), or\n'
+        '- `attraction` (attraction slug) to auto-resolve coordinates.'
+    ),
+    parameters=[
+        OpenApiParameter('lat', description='Latitude of the location', required=False),
+        OpenApiParameter('lon', description='Longitude of the location', required=False),
+        OpenApiParameter('attraction', description='Attraction slug to resolve coordinates automatically', required=False),
+    ],
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def current_weather(request):
@@ -58,6 +83,22 @@ def current_weather(request):
     return Response(serializer.data)
 
 
+@extend_schema(
+    tags=['Weather'],
+    summary='Weather forecast',
+    description=(
+        'Fetch a multi-day weather forecast for a location. Provide either:\n'
+        '- `lat` and `lon` (decimal coordinates), or\n'
+        '- `attraction` (attraction slug) to auto-resolve coordinates.\n\n'
+        'Use `days` to specify the forecast window (default: 7).'
+    ),
+    parameters=[
+        OpenApiParameter('lat', description='Latitude of the location', required=False),
+        OpenApiParameter('lon', description='Longitude of the location', required=False),
+        OpenApiParameter('attraction', description='Attraction slug to resolve coordinates automatically', required=False),
+        OpenApiParameter('days', description='Number of forecast days (default: 7)', required=False),
+    ],
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def forecast_weather(request):
@@ -88,6 +129,14 @@ def forecast_weather(request):
     return Response(forecast_data)
 
 
+@extend_schema(
+    tags=['Weather'],
+    summary='Seasonal weather patterns',
+    description='Returns historical seasonal weather patterns for a given attraction, identified by slug.',
+    parameters=[
+        OpenApiParameter('attraction', description='Attraction slug', required=True),
+    ],
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def seasonal_weather(request):

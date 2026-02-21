@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.core.cache import cache
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .models import Attraction
 from .serializers import (
     AttractionListSerializer,
@@ -13,6 +14,20 @@ from .serializers import (
 BASE_QUERYSET = Attraction.objects.filter(is_active=True).select_related('region', 'created_by').prefetch_related('images', 'tips')
 
 
+@extend_schema(
+    tags=['Attractions'],
+    summary='List or create attractions',
+    description=(
+        'GET: Returns all active attractions. Supports optional query params:\n'
+        '- `search`: filter by name, description, or region\n'
+        '- `ordering`: sort by any field (e.g. `name`, `-created_at`)\n\n'
+        'POST: Create a new attraction (authenticated users only).'
+    ),
+    parameters=[
+        OpenApiParameter('search', description='Filter by name, description, short description or region', required=False),
+        OpenApiParameter('ordering', description='Sort results by field (prefix with `-` for descending)', required=False),
+    ],
+)
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def attraction_list_create(request):
@@ -36,6 +51,11 @@ def attraction_list_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    tags=['Attractions'],
+    summary='Retrieve, update or delete an attraction',
+    description='GET: Full details of an attraction by slug. PUT/PATCH: Update it. DELETE: Remove it (authenticated users only).',
+)
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def attraction_detail(request, slug):
@@ -58,6 +78,11 @@ def attraction_detail(request, slug):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(
+    tags=['Attractions'],
+    summary='Featured attractions',
+    description='Returns up to 6 featured attractions. Results are cached for 1 hour.',
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def featured_attractions(request):
@@ -73,6 +98,14 @@ def featured_attractions(request):
     return Response(featured)
 
 
+@extend_schema(
+    tags=['Attractions'],
+    summary='Attractions by category',
+    description='Returns all active attractions filtered by a specific category.',
+    parameters=[
+        OpenApiParameter('category', description='Category name to filter attractions by', required=True),
+    ],
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def attractions_by_category(request):
@@ -85,6 +118,14 @@ def attractions_by_category(request):
     return Response(serializer.data)
 
 
+@extend_schema(
+    tags=['Attractions'],
+    summary='Attractions by region',
+    description='Returns all active attractions within a specific region, identified by slug.',
+    parameters=[
+        OpenApiParameter('region', description='Region slug to filter attractions by', required=True),
+    ],
+)
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def attractions_by_region(request):

@@ -2,10 +2,16 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from drf_spectacular.utils import extend_schema
 from .models import Region
 from .serializers import RegionSerializer
 
 
+@extend_schema(
+    tags=['Regions'],
+    summary='List or create regions',
+    description='GET: Returns all Tanzania regions. POST: Create a new region (authenticated users only).',
+)
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def region_list_create(request):
@@ -20,6 +26,11 @@ def region_list_create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(
+    tags=['Regions'],
+    summary='Retrieve, update or delete a region',
+    description='GET: Retrieve a region by slug. PUT/PATCH: Update it. DELETE: Remove it (authenticated users only).',
+)
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def region_detail(request, slug):
