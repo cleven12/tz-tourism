@@ -20,6 +20,7 @@ from rest_framework import permissions
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,6 +31,11 @@ urlpatterns = [
     path('api/v1/regions/', include('app.regions.urls')),
     path('api/v1/attractions/', include('app.attractions.urls')),
     path('api/v1/weather/', include('app.weather.urls')),
+
+    # API docs
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 
 if settings.DEBUG:

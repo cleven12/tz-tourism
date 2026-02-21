@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'cloudinary_storage',
     'cloudinary',
+    'drf_spectacular',
 ]
 CUSTOM_APPS = [
     # Add your custom apps here (e.g., 'myapp', etc.)
@@ -152,6 +153,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # JWT Configuration
@@ -184,6 +186,14 @@ CACHES = {
 # Weather API Configuration
 WEATHER_API_BASE_URL = 'https://api.open-meteo.com/v1/forecast'
 WEATHER_CACHE_TIMEOUT = 1800  # 30 minutes
+
+# OpenAPI / Swagger UI Configuration
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'TZ Tourism API',
+    'DESCRIPTION': 'API for Tanzania Tourism platform',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
 
 # PythonAnywhere production overrides
 # These activate when ON_PYTHONANYWHERE=True is set in the server .env
