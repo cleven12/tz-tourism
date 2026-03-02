@@ -52,6 +52,12 @@ CUSTOM_APPS = [
     "app.attractions",
     "app.regions",
     "app.weather",
+    "app.operators",
+    "app.partners",
+    "app.blog",
+    "app.media",
+    "app.contributors",
+    "app.feedback",
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
@@ -93,9 +99,9 @@ WSGI_APPLICATION = 'cofig.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DATABASE_NAME', default='twenzetu_safari'),
-        'USER': config('DATABASE_USER', default='twenzetu_safari_user'),
-        'PASSWORD': config('DATABASE_PASSWORD', default=''),
+        'NAME': config('DATABASE_NAME', default='xenohuru_db1'),
+        'USER': config('DATABASE_USER', default='xenohuru_db1_user'),
+        'PASSWORD': config('DATABASE_PASSWORD', default='xenohuru_db1'),
         'HOST': config('DATABASE_HOST', default='localhost'),
         'PORT': config('DATABASE_PORT', default=3306),
     }
