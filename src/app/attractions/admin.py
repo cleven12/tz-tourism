@@ -1,16 +1,21 @@
 from django.contrib import admin
-from .models import Attraction, AttractionImage, AttractionTip
+from .models import Attraction, AttractionImage, AttractionTip, EndemicSpecies, AttractionBoundary, Citation
 
 
 class AttractionImageInline(admin.TabularInline):
     model = AttractionImage
     extra = 1
 
-
 class AttractionTipInline(admin.TabularInline):
     model = AttractionTip
     extra = 1
 
+class EndemicSpeciesInline(admin.TabularInline):
+    model = EndemicSpecies
+    extra = 1
+
+class AttractionBoundaryInline(admin.StackedInline):
+    model = AttractionBoundary
 
 @admin.register(Attraction)
 class AttractionAdmin(admin.ModelAdmin):
@@ -18,7 +23,7 @@ class AttractionAdmin(admin.ModelAdmin):
     list_filter = ['category', 'difficulty_level', 'region', 'is_featured', 'is_active']
     search_fields = ['name', 'description', 'short_description']
     prepopulated_fields = {'slug': ('name',)}
-    inlines = [AttractionImageInline, AttractionTipInline]
+    inlines = [AttractionImageInline, AttractionTipInline, EndemicSpeciesInline, AttractionBoundaryInline]
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
@@ -49,3 +54,18 @@ class AttractionImageAdmin(admin.ModelAdmin):
 class AttractionTipAdmin(admin.ModelAdmin):
     list_display = ['attraction', 'title', 'created_by', 'created_at']
     list_filter = ['attraction', 'created_at']
+
+
+@admin.register(EndemicSpecies)
+class EndemicSpeciesAdmin(admin.ModelAdmin):
+    list_display = ['common_name', 'scientific_name', 'attraction', 'conservation_status', 'created_at']
+    list_filter = ['conservation_status', 'attraction']
+    search_fields = ['common_name', 'scientific_name']
+
+
+@admin.register(Citation)
+class CitationAdmin(admin.ModelAdmin):
+    list_display = ['title', 'citation_type', 'year', 'is_primary_source']
+    list_filter = ['citation_type', 'year', 'is_primary_source']
+    search_fields = ['title', 'author', 'publisher']
+    filter_horizontal = ['attractions', 'regions', 'endemic_species', 'articles']
