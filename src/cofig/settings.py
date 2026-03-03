@@ -92,14 +92,20 @@ WSGI_APPLICATION = 'cofig.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DATABASE_NAME', default='twenzetu_safari'),
-        'USER': config('DATABASE_USER', default='twenzetu_safari_user'),
-        'PASSWORD': config('DATABASE_PASSWORD', default=''),
-        'HOST': config('DATABASE_HOST', default='localhost'),
-        'PORT': config('DATABASE_PORT', default=3306),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': config('DATABASE_NAME', default='xenohuru.db'),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': config('DATABASE_NAME', default='twenzetu_safari'),
+#         'USER': config('DATABASE_USER', default='twenzetu_safari_user'),
+#         'PASSWORD': config('DATABASE_PASSWORD', default=''),
+#         'HOST': config('DATABASE_HOST', default='localhost'),
+#         'PORT': config('DATABASE_PORT', default=3306),
+#     }
+# }
 
 
 # Password validation
