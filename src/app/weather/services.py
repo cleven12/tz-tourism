@@ -50,8 +50,10 @@ class WeatherService:
         params = {
             'latitude': float(latitude),
             'longitude': float(longitude),
-            'current': 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m',
-            'timezone': 'Africa/Dar_es_Salaam'
+            'current': 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,surface_pressure,visibility',
+            'hourly': 'precipitation_probability,uv_index',
+            'forecast_days': 1,
+            'timezone': 'Africa/Dar_es_Salaam',
         }
 
         try:
@@ -70,6 +72,11 @@ class WeatherService:
                 'weather_description': cls.get_weather_code_description(current.get('weather_code', 0)),
                 'cloud_cover': current.get('cloud_cover'),
                 'wind_speed': current.get('wind_speed_10m'),
+                'wind_direction': current.get('wind_direction_10m'),
+                'surface_pressure': current.get('surface_pressure'),
+                'visibility': current.get('visibility'),
+                'precipitation_probability': data.get('hourly', {}).get('precipitation_probability', [None])[0],
+                'uv_index': data.get('hourly', {}).get('uv_index', [None])[0],
                 'timestamp': current.get('time'),
             }
             
@@ -90,9 +97,9 @@ class WeatherService:
         params = {
             'latitude': float(latitude),
             'longitude': float(longitude),
-            'daily': 'temperature_2m_max,temperature_2m_min,precipitation_sum,rain_sum,weather_code',
+            'daily': 'temperature_2m_max,temperature_2m_min,precipitation_sum,rain_sum,weather_code,precipitation_probability_max,wind_speed_10m_max,uv_index_max,relative_humidity_2m_max,relative_humidity_2m_min',
             'timezone': 'Africa/Dar_es_Salaam',
-            'forecast_days': days
+            'forecast_days': days,
         }
 
         try:
@@ -108,6 +115,12 @@ class WeatherService:
                 'precipitation': daily.get('precipitation_sum', []),
                 'rain': daily.get('rain_sum', []),
                 'weather_codes': daily.get('weather_code', []),
+                'weather_descriptions': [cls.get_weather_code_description(c) for c in daily.get('weather_code', [])],
+                'precipitation_probability': daily.get('precipitation_probability_max', []),
+                'wind_speed_max': daily.get('wind_speed_10m_max', []),
+                'uv_index_max': daily.get('uv_index_max', []),
+                'humidity_max': daily.get('relative_humidity_2m_max', []),
+                'humidity_min': daily.get('relative_humidity_2m_min', []),
             }
             
             cache.set(cache_key, forecast_data, cls.CACHE_TIMEOUT)
@@ -115,6 +128,62 @@ class WeatherService:
 
         except requests.RequestException as e:
             return {'error': f'Weather API error: {str(e)}'}
+
+    @classmethod
+    def fetch_historical_weather(cls, latitude, longitude, days=7):
+        """Fetch historical weather from Open-Meteo Archive API. Max 90 days."""
+        from datetime import date, timedelta
+        days = min(int(days), 90)
+        end_date = date.today() - timedelta(days=1)
+        start_date = end_date - timedelta(days=days - 1)
+
+        cache_key = f'weather_historical_{latitude}_{longitude}_{days}'
+        cached = cache.get(cache_key)
+        if cached:
+            return cached
+
+        params = {
+            'latitude': float(latitude),
+            'longitude': float(longitude),
+            'start_date': start_date.isoformat(),
+            'end_date': end_date.isoformat(),
+            'daily': 'temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_sum,rain_sum,relative_humidity_2m_max,relative_humidity_2m_min,wind_speed_10m_max,weather_code',
+            'timezone': 'Africa/Dar_es_Salaam',
+        }
+
+        try:
+            response = requests.get(
+                'https://archive-api.open-meteo.com/v1/archive',
+                params=params, timeout=15
+            )
+            response.raise_for_status()
+            data = response.json()
+            daily = data.get('daily', {})
+            weather_codes = daily.get('weather_code', [])
+
+            result = {
+                'period': {
+                    'start': start_date.isoformat(),
+                    'end': end_date.isoformat(),
+                    'days': days,
+                },
+                'dates': daily.get('time', []),
+                'temperature_max': daily.get('temperature_2m_max', []),
+                'temperature_min': daily.get('temperature_2m_min', []),
+                'temperature_mean': daily.get('temperature_2m_mean', []),
+                'precipitation_sum': daily.get('precipitation_sum', []),
+                'rain_sum': daily.get('rain_sum', []),
+                'humidity_max': daily.get('relative_humidity_2m_max', []),
+                'humidity_min': daily.get('relative_humidity_2m_min', []),
+                'wind_speed_max': daily.get('wind_speed_10m_max', []),
+                'weather_codes': weather_codes,
+                'weather_descriptions': [cls.get_weather_code_description(c) for c in weather_codes],
+            }
+            cache.set(cache_key, result, 3600 * 6)  # 6-hour cache
+            return result
+
+        except requests.RequestException as e:
+            return {'error': f'Historical weather API error: {str(e)}'}
 
     @classmethod
     def update_attraction_weather_cache(cls, attraction):

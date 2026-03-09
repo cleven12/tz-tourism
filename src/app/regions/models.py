@@ -1,8 +1,9 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
+from app.core.mixins import SEOMixin
 
 
-class Region(models.Model):
+class Region(SEOMixin, models.Model):
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=100, unique=True)
     description = models.TextField()
