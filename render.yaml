@@ -5,9 +5,11 @@ services:
     region: frankfurt  # Closest free region to Tanzania
     plan: free
     buildCommand: bash build.sh
-    startCommand: cd src && gunicorn cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: gunicorn --chdir src cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     healthCheckPath: /api/health/
     envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: cofig.settings
       - key: PYTHON_VERSION
         value: 3.12.0
       - key: RENDER
