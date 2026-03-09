@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: xenohuru-api
+    env: python
+    region: frankfurt  # Closest free region to Tanzania
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: cd src && gunicorn cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /api/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: RENDER
+        value: true
+      - key: SECRET_KEY
+        sync: false  # Set in Render dashboard
+      - key: DEBUG
+        value: false
+      - key: DATABASE_NAME
+        value: postgres
+      - key: DATABASE_USER
+        value: postgres.xcsiwvecyluftgfvhign
+      - key: DATABASE_HOST
+        value: aws-1-eu-west-3.pooler.supabase.com
+      - key: DATABASE_PORT
+        value: 6543
+      - key: DATABASE_PASSWORD
+        sync: false  # Set in Render dashboard
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: CONTACT_EMAIL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: JWT_ACCESS_TOKEN_LIFETIME
+        value: 60
+      - key: JWT_REFRESH_TOKEN_LIFETIME
+        value: 1440

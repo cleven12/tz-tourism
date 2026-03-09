@@ -233,3 +233,33 @@ class Citation(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class NearestTransport(models.Model):
+    TRANSPORT_TYPES = [
+        ('airport', 'Airport'),
+        ('train_station', 'Train Station'),
+        ('bus_terminal', 'Bus Terminal'),
+        ('major_city', 'Major City / Town'),
+        ('port', 'Port / Ferry Terminal'),
+        ('ferry', 'Ferry Stop'),
+    ]
+
+    attraction = models.ForeignKey(Attraction, on_delete=models.CASCADE, related_name='transport_facilities')
+    transport_type = models.CharField(max_length=20, choices=TRANSPORT_TYPES)
+    name = models.CharField(max_length=200, help_text='e.g., Kilimanjaro International Airport')
+    distance_km = models.DecimalField(max_digits=7, decimal_places=2, help_text='Distance in km')
+    travel_time_minutes = models.IntegerField(null=True, blank=True, help_text='Approximate travel time in minutes')
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    description = models.TextField(blank=True, help_text='Additional info, transport options, notes')
+    is_recommended = models.BooleanField(default=False, help_text='Recommended route/facility')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['distance_km']
+        verbose_name = 'Nearest Transport'
+        verbose_name_plural = 'Nearest Transports'
+
+    def __str__(self):
+        return f"{self.name} ({self.get_transport_type_display()}) — {self.distance_km}km from {self.attraction.name}"

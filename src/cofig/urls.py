@@ -20,8 +20,12 @@ from rest_framework import permissions
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from app.core.views import robots_txt, sitemap_xml, health_check
 
 urlpatterns = [
+    path('robots.txt', robots_txt, name='robots-txt'),
+    path('sitemap.xml', sitemap_xml, name='sitemap'),
+    path('api/health/', health_check, name='health-check'),
     path('admin/', admin.site.urls),
     path('', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
 
@@ -36,6 +40,7 @@ urlpatterns = [
     path('api/v1/media/', include('app.media.urls')),
     path('api/v1/contributors/', include('app.contributors.urls')),
     path('api/v1/feedback/', include('app.feedback.urls')),
+    path('api/v1/itinerary/', include('app.itinerary.urls')),
 
     # API schema
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

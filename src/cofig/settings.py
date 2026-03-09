@@ -58,6 +58,7 @@ CUSTOM_APPS = [
     "app.media",
     "app.contributors",
     "app.feedback",
+    "app.itinerary",
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + CUSTOM_APPS
@@ -67,6 +68,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -95,15 +97,19 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cofig.wsgi.application'
 
 
-# Database
+# Database — Supabase (PostgreSQL)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DATABASE_NAME', default='xenohuru_db1'),
-        'USER': config('DATABASE_USER', default='xenohuru_db1_user'),
-        'PASSWORD': config('DATABASE_PASSWORD', default='xenohuru_db1'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DATABASE_NAME', default='postgres'),
+        'USER': config('DATABASE_USER', default='postgres'),
+        'PASSWORD': config('DATABASE_PASSWORD', default=''),
         'HOST': config('DATABASE_HOST', default='localhost'),
-        'PORT': config('DATABASE_PORT', default=3306),
+        'PORT': config('DATABASE_PORT', default='6543'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
 
@@ -135,6 +141,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
@@ -205,20 +212,38 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
-# PythonAnywhere production overrides
+# Email Configuration (Gmail SMTP)
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Xenohuru API <noreply@xenohuru.com>')
+CONTACT_EMAIL = config('CONTACT_EMAIL', default='')  # Your personal email for notifications
+
+# Render.com production overrides
+# Activates when RENDER=True is set in environment variables
+if config('RENDER', default=False, cast=bool):
+    DEBUG = False
+    RENDER_EXTERNAL_URL = config('RENDER_EXTERNAL_URL', default='')
+    ALLOWED_HOSTS = [
+        config('RENDER_EXTERNAL_HOSTNAME', default=''),
+        'localhost',
+        '127.0.0.1',
+    ]
+    CORS_ALLOWED_ORIGINS = [
+        config('FRONTEND_URL', default='http://localhost:3000'),
+    ]
+    if RENDER_EXTERNAL_URL:
+        CORS_ALLOWED_ORIGINS.append(RENDER_EXTERNAL_URL)
+
 # These activate when ON_PYTHONANYWHERE=True is set in the server .env
 if config('ON_PYTHONANYWHERE', default=False, cast=bool):
     DEBUG = False
     ALLOWED_HOSTS = [
         config('PYTHONANYWHERE_USERNAME', default='') + '.pythonanywhere.com',
     ] + [h for h in ALLOWED_HOSTS if h not in ('', 'localhost', '127.0.0.1')]
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': Path.home() / config('PYTHONANYWHERE_USERNAME', default='app') / 'xenohuru-api' / 'db.sqlite3',
-        }
-    }
 
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = Path.home() / config('PYTHONANYWHERE_USERNAME', default='app') / 'xenohuru-api' / 'media'

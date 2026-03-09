@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Attraction, AttractionImage, AttractionTip, EndemicSpecies, AttractionBoundary, Citation
+from .models import Attraction, AttractionImage, AttractionTip, EndemicSpecies, AttractionBoundary, Citation, NearestTransport
 
 
 class AttractionImageInline(admin.TabularInline):
@@ -69,3 +69,11 @@ class CitationAdmin(admin.ModelAdmin):
     list_filter = ['citation_type', 'year', 'is_primary_source']
     search_fields = ['title', 'author', 'publisher']
     filter_horizontal = ['attractions', 'regions', 'endemic_species', 'articles']
+
+
+@admin.register(NearestTransport)
+class NearestTransportAdmin(admin.ModelAdmin):
+    list_display = ['name', 'transport_type', 'distance_km', 'attraction', 'is_recommended']
+    list_filter = ['transport_type', 'is_recommended']
+    search_fields = ['name', 'attraction__name']
+    ordering = ['distance_km']

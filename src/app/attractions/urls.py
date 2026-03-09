@@ -13,6 +13,9 @@ from .views import (
     citation_list,
     attraction_citations,
     endemic_species_citations,
+    attraction_transport,
+    transport_by_type,
+    transport_detail,
 )
 from app.feedback.views import attraction_reviews
 
@@ -30,5 +33,8 @@ urlpatterns = [
     path('<slug:slug>/boundary/geojson/', attraction_boundary_geojson, name='attraction-boundary-geojson'),
     path('<slug:slug>/citations/', attraction_citations, name='attraction-citations'),
     path('<slug:slug>/reviews/', attraction_reviews, name='attraction-reviews'),
+    path('<slug:slug>/transport/', attraction_transport, name='attraction-transport'),
+    path('<slug:slug>/transport/filter/', transport_by_type, name='attraction-transport-filter'),
+    path('transport/<int:pk>/', transport_detail, name='transport-detail'),
     path('<slug:slug>/', attraction_detail, name='attraction-detail'),
 ]

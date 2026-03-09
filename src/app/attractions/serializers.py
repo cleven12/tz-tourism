@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Attraction, AttractionImage, AttractionTip, EndemicSpecies, AttractionBoundary, Citation
+from .models import Attraction, AttractionImage, AttractionTip, EndemicSpecies, AttractionBoundary, Citation, NearestTransport
 from app.regions.serializers import RegionSerializer
 
 
@@ -51,6 +51,22 @@ class CitationSerializer(serializers.ModelSerializer):
         ]
 
 
+class NearestTransportSerializer(serializers.ModelSerializer):
+    transport_type_display = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NearestTransport
+        fields = [
+            'id', 'attraction', 'transport_type', 'transport_type_display', 'name',
+            'distance_km', 'travel_time_minutes', 'latitude', 'longitude',
+            'description', 'is_recommended', 'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+
+    def get_transport_type_display(self, obj):
+        return obj.get_transport_type_display()
+
+
 class AttractionListSerializer(serializers.ModelSerializer):
     region_name = serializers.CharField(source='region.name', read_only=True)
     category_display = serializers.CharField(source='get_category_display', read_only=True)
@@ -71,6 +87,7 @@ class AttractionDetailSerializer(serializers.ModelSerializer):
     tips = AttractionTipSerializer(many=True, read_only=True)
     endemic_species = EndemicSpeciesSerializer(many=True, read_only=True)
     boundary = AttractionBoundarySerializer(read_only=True)
+    transport_facilities = serializers.SerializerMethodField()
     category_display = serializers.CharField(source='get_category_display', read_only=True)
     difficulty_display = serializers.CharField(source='get_difficulty_level_display', read_only=True)
     created_by_username = serializers.CharField(source='created_by.username', read_only=True)
@@ -83,9 +100,13 @@ class AttractionDetailSerializer(serializers.ModelSerializer):
             'difficulty_level', 'difficulty_display', 'access_info', 'nearest_airport',
             'distance_from_airport', 'best_time_to_visit', 'seasonal_availability',
             'estimated_duration', 'entrance_fee', 'requires_guide', 'requires_permit',
-            'featured_image', 'images', 'tips', 'endemic_species', 'boundary', 'is_featured',
+            'featured_image', 'images', 'tips', 'endemic_species', 'boundary',
+            'transport_facilities', 'is_featured',
             'created_by_username', 'created_at', 'updated_at'
         ]
+
+    def get_transport_facilities(self, obj):
+        return NearestTransportSerializer(obj.transport_facilities.all(), many=True).data
 
 
 class AttractionCreateUpdateSerializer(serializers.ModelSerializer):

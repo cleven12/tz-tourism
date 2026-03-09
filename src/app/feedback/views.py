@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+from django.conf import settings
 from drf_spectacular.utils import extend_schema, OpenApiResponse
 from .models import UserFeedback, Review
 from .serializers import UserFeedbackSerializer, ReviewSerializer
@@ -20,9 +22,20 @@ def submit_feedback(request):
     serializer = UserFeedbackSerializer(data=request.data)
     if serializer.is_valid():
         if request.user.is_authenticated:
-            serializer.save(user=request.user)
+            feedback = serializer.save(user=request.user)
         else:
-            serializer.save()
+            feedback = serializer.save()
+        try:
+            if settings.CONTACT_EMAIL:
+                send_mail(
+                    subject=f'[Xenohuru] New {feedback.feedback_type} — {feedback.subject}',
+                    message=f'From: {feedback.name} ({feedback.email})\n\nType: {feedback.get_feedback_type_display()}\n\nMessage:\n{feedback.message}',
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.CONTACT_EMAIL],
+                    fail_silently=True,
+                )
+        except Exception:
+            pass  # Never fail the request due to email errors
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -48,7 +61,18 @@ def attraction_reviews(request, slug):
             
         serializer = ReviewSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user, attraction=attraction)
+            review = serializer.save(user=request.user, attraction=attraction)
+            try:
+                if settings.CONTACT_EMAIL:
+                    send_mail(
+                        subject=f'[Xenohuru] New review for {attraction.name}',
+                        message=f'User: {request.user.username}\nRating: {review.rating}/5\n\n{review.title}\n\n{review.body}',
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[settings.CONTACT_EMAIL],
+                        fail_silently=True,
+                    )
+            except Exception:
+                pass  # Never fail the request due to email errors
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

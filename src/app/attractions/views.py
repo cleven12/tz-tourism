@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 import math
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
 
-from .models import Attraction, EndemicSpecies, AttractionBoundary, Citation
+from .models import Attraction, EndemicSpecies, AttractionBoundary, Citation, NearestTransport
 from .serializers import (
     AttractionListSerializer,
     AttractionDetailSerializer,
@@ -15,6 +15,7 @@ from .serializers import (
     EndemicSpeciesSerializer,
     AttractionBoundarySerializer,
     CitationSerializer,
+    NearestTransportSerializer,
 )
 
 BASE_QUERYSET = Attraction.objects.filter(is_active=True).select_related('region', 'created_by').prefetch_related('images', 'tips', 'endemic_species')
@@ -86,17 +87,24 @@ BASE_QUERYSET = Attraction.objects.filter(is_active=True).select_related('region
 @permission_classes([IsAuthenticatedOrReadOnly])
 def attraction_list_create(request):
     if request.method == 'GET':
+        search = request.query_params.get('search', '')
+        ordering = request.query_params.get('ordering', '')
+        page = request.query_params.get('page', '1')
+        cache_key = f'attractions_list_{search}_{ordering}_{page}'
+        cached = cache.get(cache_key)
+        if cached:
+            return Response(cached)
+
         attractions = BASE_QUERYSET
-        search = request.query_params.get('search')
         if search:
             attractions = attractions.filter(name__icontains=search) | \
                           attractions.filter(description__icontains=search) | \
                           attractions.filter(short_description__icontains=search) | \
                           attractions.filter(region__name__icontains=search)
-        ordering = request.query_params.get('ordering')
         if ordering:
             attractions = attractions.order_by(ordering)
         serializer = AttractionListSerializer(attractions, many=True)
+        cache.set(cache_key, serializer.data, 300)  # 5 min
         return Response(serializer.data)
     serializer = AttractionCreateUpdateSerializer(data=request.data)
     if serializer.is_valid():
@@ -150,16 +158,25 @@ def attraction_detail(request, slug):
         return Response({'error': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
+        cache_key = f'attraction_detail_{slug}'
+        cached = cache.get(cache_key)
+        if cached:
+            return Response(cached)
         serializer = AttractionDetailSerializer(attraction)
+        cache.set(cache_key, serializer.data, 600)  # 10 min
         return Response(serializer.data)
     elif request.method in ['PUT', 'PATCH']:
         serializer = AttractionCreateUpdateSerializer(attraction, data=request.data, partial=request.method == 'PATCH')
         if serializer.is_valid():
             serializer.save()
+            cache.delete(f'attraction_detail_{slug}')
+            cache.delete('featured_attractions')
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         attraction.delete()
+        cache.delete(f'attraction_detail_{slug}')
+        cache.delete('featured_attractions')
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -226,8 +243,14 @@ def attractions_by_category(request):
     if not category:
         return Response({'error': 'Category parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
+    cache_key = f'attractions_category_{category}'
+    cached = cache.get(cache_key)
+    if cached:
+        return Response(cached)
+
     attractions = BASE_QUERYSET.filter(category=category)
     serializer = AttractionListSerializer(attractions, many=True)
+    cache.set(cache_key, serializer.data, 900)  # 15 min
     return Response(serializer.data)
 
 
@@ -262,8 +285,14 @@ def attractions_by_region(request):
     if not region_slug:
         return Response({'error': 'Region parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
+    cache_key = f'attractions_region_{region_slug}'
+    cached = cache.get(cache_key)
+    if cached:
+        return Response(cached)
+
     attractions = BASE_QUERYSET.filter(region__slug=region_slug)
     serializer = AttractionListSerializer(attractions, many=True)
+    cache.set(cache_key, serializer.data, 900)  # 15 min
     return Response(serializer.data)
 
 
@@ -433,4 +462,53 @@ def endemic_species_citations(request, pk):
     species = get_object_or_404(EndemicSpecies, pk=pk)
     citations = species.citations.all()
     serializer = CitationSerializer(citations, many=True)
+    return Response(serializer.data)
+
+
+@extend_schema(tags=['Attractions - Transport'], summary='List transport facilities', description='Get all transport facilities (airports, bus terminals, train stations, major cities) near an attraction.')
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def attraction_transport(request, slug):
+    attraction = get_object_or_404(Attraction, slug=slug, is_active=True)
+    if request.method == 'GET':
+        transports = attraction.transport_facilities.all()
+        serializer = NearestTransportSerializer(transports, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = NearestTransportSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(attraction=attraction)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(tags=['Attractions - Transport'], summary='Transport facility detail')
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def transport_detail(request, pk):
+    transport = get_object_or_404(NearestTransport, pk=pk)
+    if request.method == 'GET':
+        serializer = NearestTransportSerializer(transport)
+        return Response(serializer.data)
+    elif request.method in ['PUT', 'PATCH']:
+        serializer = NearestTransportSerializer(transport, data=request.data, partial=request.method == 'PATCH')
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        transport.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(tags=['Attractions - Transport'], summary='Filter by transport type',
+    parameters=[OpenApiParameter('type', str, description='Filter: airport, train_station, bus_terminal, major_city, port, ferry')])
+@api_view(['GET'])
+def transport_by_type(request, slug):
+    attraction = get_object_or_404(Attraction, slug=slug, is_active=True)
+    transport_type = request.query_params.get('type')
+    transports = attraction.transport_facilities.all()
+    if transport_type:
+        transports = transports.filter(transport_type=transport_type)
+    serializer = NearestTransportSerializer(transports, many=True)
     return Response(serializer.data)

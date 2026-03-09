@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample, OpenApiResponse
 from app.attractions.models import Attraction
 from .models import WeatherCache, SeasonalWeatherPattern
@@ -262,7 +262,6 @@ def forecast_weather(request):
     tags=['Weather'],
     summary='Historical seasonal weather patterns for an attraction',
     description=(
-        'Returns the manually curated seasonal weather patterns for an attraction. '
         'These are **not** live data — they are historical patterns entered by contributors.\n\n'
         'Tanzania has three seasons:\n'
         '- **Dry season** (`dry`) — June–October: best time to visit most parks\n'
@@ -341,3 +340,47 @@ def seasonal_weather(request):
         return Response(serializer.data)
     except Attraction.DoesNotExist:
         return Response({'error': 'Attraction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@extend_schema(
+    tags=['Weather'],
+    summary='Historical weather data',
+    description='Get historical weather data for a location. Supports last 5, 7, 30, or 90 days. Uses Open-Meteo Archive API (free). Returns daily temperature, precipitation, rainfall, humidity, wind speed.',
+    parameters=[
+        OpenApiParameter('lat', float, description='Latitude'),
+        OpenApiParameter('lon', float, description='Longitude'),
+        OpenApiParameter('attraction', str, description='Attraction slug (alternative to lat/lon)'),
+        OpenApiParameter('days', int, description='Number of past days (default: 7, max: 90)'),
+    ]
+)
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def historical_weather(request):
+    lat = request.query_params.get('lat')
+    lon = request.query_params.get('lon')
+    attraction_slug = request.query_params.get('attraction')
+    days = request.query_params.get('days', 7)
+
+    try:
+        days = int(days)
+    except (ValueError, TypeError):
+        days = 7
+
+    if attraction_slug:
+        try:
+            from app.attractions.models import Attraction
+            attraction = Attraction.objects.get(slug=attraction_slug, is_active=True)
+            lat, lon = attraction.latitude, attraction.longitude
+        except Attraction.DoesNotExist:
+            return Response({'error': 'Attraction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if not lat or not lon:
+        return Response(
+            {'error': 'Provide lat & lon coordinates or attraction slug'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    data = WeatherService.fetch_historical_weather(lat, lon, days)
+    if 'error' in data:
+        return Response(data, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return Response(data)

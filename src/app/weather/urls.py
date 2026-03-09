@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import weather_list, weather_detail, current_weather, forecast_weather, seasonal_weather
+from .views import weather_list, weather_detail, current_weather, forecast_weather, seasonal_weather, historical_weather
 
 urlpatterns = [
     path('', weather_list, name='weather-list'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('current/', current_weather, name='weather-current'),
     path('forecast/', forecast_weather, name='weather-forecast'),
     path('seasonal/', seasonal_weather, name='weather-seasonal'),
+    path('historical/', historical_weather, name='weather-historical'),
 ]
