@@ -6,10 +6,9 @@
 
 import sys
 import os
-from pathlib import Path
 
-# Project root on PythonAnywhere
-PROJECT_ROOT = '/home/xenohuru/xenohuru-api'
+# Project root on PythonAnywhere (using the existing 'main' directory)
+PROJECT_ROOT = '/home/xenohuru/main'
 SRC_DIR = os.path.join(PROJECT_ROOT, 'src')
 
 # Add src/ to sys.path so Django can find 'cofig' and 'app.*'

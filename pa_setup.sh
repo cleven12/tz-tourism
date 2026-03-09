@@ -2,20 +2,27 @@
 # One-time setup script for PythonAnywhere
 # Run this in the PythonAnywhere bash console ONCE to set up the project.
 #
-# Usage: bash /home/xenohuru/pa_setup.sh
+# This links the existing /home/xenohuru/main directory to the GitHub repo,
+# replacing the old default Django project with the xenohuru-api codebase.
+#
+# Usage: paste these commands in the PA Bash console
 
 set -e
 PA_USERNAME="xenohuru"
-PROJECT_DIR="/home/${PA_USERNAME}/xenohuru-api"
+PROJECT_DIR="/home/${PA_USERNAME}/main"
 VENV_DIR="/home/${PA_USERNAME}/.virtualenvs/xenohuru-venv"
 REPO_URL="https://github.com/xenohuru/xenohuru-api.git"
 
-echo "=== Step 1: Clone repository ==="
-if [ -d "$PROJECT_DIR" ]; then
-  echo "Directory already exists, pulling latest..."
-  cd "$PROJECT_DIR" && git pull origin main
+echo "=== Step 1: Link existing directory to GitHub repo ==="
+cd "$PROJECT_DIR"
+if [ -d ".git" ]; then
+  echo "Git already initialized, pulling latest..."
+  git pull origin main
 else
-  git clone "$REPO_URL" "$PROJECT_DIR"
+  git init
+  git remote add origin "$REPO_URL"
+  git fetch origin main
+  git reset --hard origin/main
 fi
 
 echo "=== Step 2: Create virtual environment ==="
@@ -54,4 +61,5 @@ echo "2. Set Source code: $PROJECT_DIR"
 echo "3. Set Virtualenv: $VENV_DIR"
 echo "4. Edit WSGI file — replace contents with the wsgi_config.py snippet:"
 echo "   cat $PROJECT_DIR/wsgi_config.py"
-echo "5. Reload the web app"
+echo "5. Set Static files: URL=/static/  Dir=$PROJECT_DIR/src/staticfiles"
+echo "6. Reload the web app"

@@ -252,5 +252,5 @@ if config('ON_PYTHONANYWHERE', default=False, cast=bool):
         f'https://{PA_USERNAME}.pythonanywhere.com',
     ]
     STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/xenohuru-api/src/media')
+    MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/src/media')
 
