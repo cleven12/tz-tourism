@@ -254,3 +254,11 @@ if config('ON_PYTHONANYWHERE', default=False, cast=bool):
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/media')
 
+    # PythonAnywhere free tier uses SQLite (external DB connections not allowed)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': Path(f'/home/{PA_USERNAME}/main/db.sqlite3'),
+        }
+    }
+
