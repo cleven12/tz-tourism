@@ -8,7 +8,7 @@ Usage:
     python manage.py init_encrypted_db
 
 This is a ONE-TIME operation. After running it:
-  - db.sqlite3 is encrypted with DB_ENCRYPTION_KEY
+  - chui.db is encrypted with DB_ENCRYPTION_KEY
   - You can safely commit it to GitHub
   - Only the correct DB_ENCRYPTION_KEY can open it
 """
@@ -110,7 +110,7 @@ class Command(BaseCommand):
                 f"\n✅ Database encrypted successfully!\n"
                 f"   Encrypted: {db_path}\n"
                 f"   Backup:    {backup_path}\n\n"
-                f"You can now safely commit db.sqlite3 to GitHub.\n"
+                f"You can now safely commit chui.db to GitHub.\n"
                 f"Delete the backup when you're confident: rm {backup_path}"
             ))
 

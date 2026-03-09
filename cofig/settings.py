@@ -107,7 +107,7 @@ DB_ENCRYPTION_KEY = config('DB_ENCRYPTION_KEY', default='')
 DATABASES = {
     'default': {
         'ENGINE': 'app.core.db_backends.sqlcipher',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'chui.db',
     }
 }
 
@@ -261,7 +261,7 @@ if config('ON_PYTHONANYWHERE', default=False, cast=bool):
     ]
     STATIC_ROOT = BASE_DIR / 'staticfiles'
     MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/media')
-    DATABASES['default']['NAME'] = Path(f'/home/{PA_USERNAME}/main/db.sqlite3')
+    DATABASES['default']['NAME'] = Path(f'/home/{PA_USERNAME}/main/chui.db')
 
     # Tighter cache on PA: use /home dir so it persists across reloads
     CACHES['default']['LOCATION'] = f'/home/{PA_USERNAME}/main/.cache'

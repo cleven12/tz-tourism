@@ -11,7 +11,7 @@ Usage in settings.py:
     DATABASES = {
         'default': {
             'ENGINE': 'app.core.db_backends.sqlcipher',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': BASE_DIR / 'chui.db',
         }
     }
     DB_ENCRYPTION_KEY = config('DB_ENCRYPTION_KEY')
