@@ -69,9 +69,12 @@ AUTH_USER_MODEL = 'accounts.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',       # must be before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',    # must be after CommonMiddleware
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -191,14 +194,23 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Cache Configuration (in-memory cache, no Redis required)
+# Cache — file-based (multi-process safe, survives restarts, works on PA free tier)
+# LocMemCache is per-process; FileBasedCache is shared across all WSGI workers.
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'tour-api-cache',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/xenohuru-cache',
         'TIMEOUT': 300,
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,   # cull 1/3 of entries when MAX_ENTRIES hit
+        }
     }
 }
+
+# Full-page cache timeout for anonymous GET requests (via cache middleware)
+CACHE_MIDDLEWARE_SECONDS = 60          # 1 minute for list/public endpoints
+CACHE_MIDDLEWARE_KEY_PREFIX = 'xeno'
 
 # Weather API Configuration
 WEATHER_API_BASE_URL = 'https://api.open-meteo.com/v1/forecast'
@@ -255,10 +267,26 @@ if config('ON_PYTHONANYWHERE', default=False, cast=bool):
     MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/media')
 
     # PythonAnywhere free tier uses SQLite (external DB connections not allowed)
+    # WAL mode + PRAGMA tuning for maximum read throughput
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': Path(f'/home/{PA_USERNAME}/main/db.sqlite3'),
+            'OPTIONS': {
+                'timeout': 20,
+                'init_command': (
+                    'PRAGMA journal_mode=WAL;'       # concurrent reads + writes
+                    'PRAGMA synchronous=NORMAL;'     # safe but faster than FULL
+                    'PRAGMA cache_size=-32000;'      # 32MB page cache
+                    'PRAGMA temp_store=MEMORY;'      # temp tables in RAM
+                    'PRAGMA mmap_size=536870912;'    # 512MB memory-mapped I/O
+                    'PRAGMA foreign_keys=ON;'
+                    'PRAGMA wal_autocheckpoint=1000;'
+                ),
+            }
         }
     }
+
+    # Tighter cache on PA: use /home dir so it persists across reloads
+    CACHES['default']['LOCATION'] = f'/home/{PA_USERNAME}/main/.cache'
 
