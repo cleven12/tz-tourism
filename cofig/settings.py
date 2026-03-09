@@ -250,6 +250,26 @@ if config('RENDER', default=False, cast=bool):
     if RENDER_EXTERNAL_URL:
         CORS_ALLOWED_ORIGINS.append(RENDER_EXTERNAL_URL)
 
+    # Render uses ephemeral filesystem — SQLite with WAL for max concurrency
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            'OPTIONS': {
+                'timeout': 20,
+                'init_command': (
+                    'PRAGMA journal_mode=WAL;'
+                    'PRAGMA synchronous=NORMAL;'
+                    'PRAGMA cache_size=-32000;'
+                    'PRAGMA temp_store=MEMORY;'
+                    'PRAGMA mmap_size=536870912;'
+                    'PRAGMA foreign_keys=ON;'
+                    'PRAGMA wal_autocheckpoint=1000;'
+                ),
+            }
+        }
+    }
+
 # These activate when ON_PYTHONANYWHERE=True is set in the server .env
 if config('ON_PYTHONANYWHERE', default=False, cast=bool):
     DEBUG = False

@@ -4,9 +4,8 @@ services:
     env: python
     region: frankfurt
     plan: free
-    rootDir: src
-    buildCommand: bash build.sh
-    startCommand: gunicorn cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate
+    startCommand: gunicorn cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --threads 4 --worker-class gthread --timeout 120 --keep-alive 5 --max-requests 1000 --max-requests-jitter 100
     healthCheckPath: /api/health/
     envVars:
       - key: PYTHON_VERSION
@@ -18,16 +17,6 @@ services:
       - key: DEBUG
         value: false
       - key: SECRET_KEY
-        sync: false
-      - key: DATABASE_NAME
-        value: postgres
-      - key: DATABASE_USER
-        value: postgres.xcsiwvecyluftgfvhign
-      - key: DATABASE_HOST
-        value: aws-1-eu-west-3.pooler.supabase.com
-      - key: DATABASE_PORT
-        value: 6543
-      - key: DATABASE_PASSWORD
         sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
