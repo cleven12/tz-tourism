@@ -6,6 +6,7 @@ __pycache__/
 *.db
 staticfiles/
 media/
+!app/media/
 .DS_Store
 copilot*.md
 .idea/
