@@ -2,24 +2,23 @@ services:
   - type: web
     name: xenohuru-api
     env: python
-    region: frankfurt  # Closest free region to Tanzania
+    region: frankfurt
     plan: free
-    buildCommand: bash src/build.sh
-    startCommand: PYTHONPATH=/opt/render/project/src/src gunicorn --chdir src cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    rootDir: src
+    buildCommand: bash build.sh
+    startCommand: gunicorn cofig.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     healthCheckPath: /api/health/
     envVars:
-      - key: PYTHONPATH
-        value: /opt/render/project/src/src
-      - key: DJANGO_SETTINGS_MODULE
-        value: cofig.settings
       - key: PYTHON_VERSION
         value: 3.12.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: cofig.settings
       - key: RENDER
         value: true
-      - key: SECRET_KEY
-        sync: false  # Set in Render dashboard
       - key: DEBUG
         value: false
+      - key: SECRET_KEY
+        sync: false
       - key: DATABASE_NAME
         value: postgres
       - key: DATABASE_USER
@@ -29,7 +28,7 @@ services:
       - key: DATABASE_PORT
         value: 6543
       - key: DATABASE_PASSWORD
-        sync: false  # Set in Render dashboard
+        sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
