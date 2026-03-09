@@ -82,7 +82,7 @@ ROOT_URLCONF = 'cofig.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.parent / 'public'],
+        'DIRS': [BASE_DIR / 'public'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -252,5 +252,5 @@ if config('ON_PYTHONANYWHERE', default=False, cast=bool):
         f'https://{PA_USERNAME}.pythonanywhere.com',
     ]
     STATIC_ROOT = BASE_DIR / 'staticfiles'
-    MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/src/media')
+    MEDIA_ROOT = Path(f'/home/{PA_USERNAME}/main/media')
 

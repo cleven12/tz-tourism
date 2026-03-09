@@ -30,7 +30,7 @@ jobs:
           sleep 5
 
           # Run deploy commands
-          DEPLOY_CMDS="cd /home/xenohuru/main && git pull origin main && source /home/xenohuru/.virtualenvs/xenohuru-venv/bin/activate && pip install -r requirements.txt --quiet && python src/manage.py migrate --no-input && python src/manage.py collectstatic --no-input --clear 2>&1 | tail -5 && echo 'DEPLOY_DONE'"
+          DEPLOY_CMDS="cd /home/xenohuru/main && git pull origin main && source /home/xenohuru/.virtualenvs/xenohuru-venv/bin/activate && pip install -r requirements.txt --quiet && python manage.py migrate --no-input && python manage.py collectstatic --no-input --clear 2>&1 | tail -5 && echo 'DEPLOY_DONE'"
 
           curl -s --location \
             --request POST "https://www.pythonanywhere.com/api/v0/user/${PA_USERNAME}/consoles/${CONSOLE_ID}/send_input/" \

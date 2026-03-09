@@ -7,16 +7,15 @@
 import sys
 import os
 
-# Project root on PythonAnywhere (using the existing 'main' directory)
+# Project root on PythonAnywhere
 PROJECT_ROOT = '/home/xenohuru/main'
-SRC_DIR = os.path.join(PROJECT_ROOT, 'src')
 
-# Add src/ to sys.path so Django can find 'cofig' and 'app.*'
-if SRC_DIR not in sys.path:
-    sys.path.insert(0, SRC_DIR)
+# Add project root to sys.path so Django can find 'cofig' and 'app.*'
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 # Load environment variables from .env
-env_file = os.path.join(SRC_DIR, '.env')
+env_file = os.path.join(PROJECT_ROOT, '.env')
 if os.path.exists(env_file):
     with open(env_file) as f:
         for line in f:
