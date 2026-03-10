@@ -68,8 +68,25 @@ def sitemap_xml(request):
 
 
 def health_check(request):
+    from django.conf import settings
+    from app.regions.models import Region
+    from app.attractions.models import Attraction
+    db_path = str(settings.DATABASES['default']['NAME'])
+    try:
+        region_count = Region.objects.count()
+        attraction_count = Attraction.objects.count()
+        db_status = 'ok'
+    except Exception as e:
+        region_count = -1
+        attraction_count = -1
+        db_status = str(e)
+
     return JsonResponse({
         'status': 'ok',
         'timestamp': timezone.now().isoformat(),
         'service': 'Xenohuru API',
+        'db_path': db_path,
+        'db_status': db_status,
+        'regions': region_count,
+        'attractions': attraction_count,
     })
