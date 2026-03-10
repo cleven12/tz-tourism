@@ -36,7 +36,7 @@ pip install -r "$PROJECT_DIR/requirements.txt" --quiet
 echo "=== Step 5: Check .env file ==="
 if [ ! -f "$PROJECT_DIR/.env" ]; then
   echo ""
-  echo "⚠️  .env file missing! Upload it to: $PROJECT_DIR/.env"
+  echo "  .env file missing! Upload it to: $PROJECT_DIR/.env"
   echo "    Use the PA Files tab or: nano $PROJECT_DIR/.env"
   echo "    Reference: $PROJECT_DIR/.env.example"
   echo ""
@@ -51,7 +51,7 @@ echo "=== Step 7: Collect static files ==="
 python "$PROJECT_DIR/manage.py" collectstatic --no-input --clear
 
 echo ""
-echo "✅ Setup complete!"
+echo "Setup complete!"
 echo ""
 echo "=== Configure the Web tab in PythonAnywhere ==="
 echo "  Source code:  $PROJECT_DIR"
