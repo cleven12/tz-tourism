@@ -36,11 +36,11 @@ BASE_QUERYSET = Attraction.objects.filter(is_active=True).select_related('region
         '**POST** — Create a new attraction. Requires authentication.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl "https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/?search=kilimanjaro"\n'
+        'curl "https://159.65.119.182:8000/api/v1/attractions/?search=kilimanjaro"\n'
         '```\n\n'
         '**curl POST example:**\n'
         '```bash\n'
-        'curl -X POST https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/ \\\n'
+        'curl -X POST https://159.65.119.182:8000/api/v1/attractions/ \\\n'
         '  -H "Authorization: Bearer <access_token>" \\\n'
         '  -H "Content-Type: application/json" \\\n'
         '  -d \'{"name":"Ngorongoro Crater","slug":"ngorongoro-crater","region":1,"category":"wildlife",'
@@ -139,11 +139,11 @@ def attraction_list_create(request):
         '- **DELETE** — Remove the attraction. Authentication required.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/mount-kilimanjaro/\n'
+        'curl https://159.65.119.182:8000/api/v1/attractions/mount-kilimanjaro/\n'
         '```\n\n'
         '**curl PATCH example:**\n'
         '```bash\n'
-        'curl -X PATCH https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/mount-kilimanjaro/ \\\n'
+        'curl -X PATCH https://159.65.119.182:8000/api/v1/attractions/mount-kilimanjaro/ \\\n'
         '  -H "Authorization: Bearer <access_token>" \\\n'
         '  -H "Content-Type: application/json" \\\n'
         '  -d \'{"entrance_fee":"80.00"}\'\n'
@@ -203,7 +203,7 @@ def attraction_detail(request, slug):
         'Results are cached in memory for **1 hour** — changes in the admin panel may take up to 1 hour to reflect here.\n\n'
         '**curl example:**\n'
         '```bash\n'
-        'curl https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/featured/\n'
+        'curl https://159.65.119.182:8000/api/v1/attractions/featured/\n'
         '```'
     ),
     responses={
@@ -234,7 +234,7 @@ def featured_attractions(request):
         '`adventure`, `national_park`, `island`, `waterfall`, `lake`, `other`\n\n'
         '**curl example:**\n'
         '```bash\n'
-        'curl "https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/by_category/?category=national_park"\n'
+        'curl "https://159.65.119.182:8000/api/v1/attractions/by_category/?category=national_park"\n'
         '```'
     ),
     parameters=[
@@ -277,7 +277,7 @@ def attractions_by_category(request):
         'Use `GET /api/v1/regions/` to list all available region slugs.\n\n'
         '**curl example:**\n'
         '```bash\n'
-        'curl "https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/by_region/?region=arusha"\n'
+        'curl "https://159.65.119.182:8000/api/v1/attractions/by_region/?region=arusha"\n'
         '```'
     ),
     parameters=[
@@ -318,7 +318,7 @@ def attractions_by_region(request):
         'Returns all endemic species recorded at the given attraction.\n\n'
         '**curl example:**\n'
         '```bash\n'
-        'curl https://xenohuru-o7ix53tg.b4a.run/api/v1/attractions/serengeti/endemic-species/\n'
+        'curl https://159.65.119.182:8000/api/v1/attractions/serengeti/endemic-species/\n'
         '```'
     ),
     responses={

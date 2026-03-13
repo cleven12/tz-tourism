@@ -20,7 +20,7 @@ BASE_QUERYSET = Partner.objects.filter(is_active=True)
         '**POST** — Submit a partner application. Requires authentication.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl "https://xenohuru-o7ix53tg.b4a.run/api/v1/partners/"\n'
+        'curl "https://159.65.119.182:8000/api/v1/partners/"\n'
         '```'
     ),
     parameters=[
@@ -62,7 +62,7 @@ def partner_list_create(request):
         '- **DELETE** — Remove partner. Authentication required.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl https://xenohuru-o7ix53tg.b4a.run/api/v1/partners/acacia-foundation/\n'
+        'curl https://159.65.119.182:8000/api/v1/partners/acacia-foundation/\n'
         '```'
     ),
     responses={

@@ -26,7 +26,7 @@ BASE_QUERYSET = Article.objects.filter(is_published=True).select_related('author
         'Set `is_published=true` and `published_at` to make it visible publicly.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl "https://xenohuru-o7ix53tg.b4a.run/api/v1/blog/"\n'
+        'curl "https://159.65.119.182:8000/api/v1/blog/"\n'
         '```'
     ),
     parameters=[
@@ -73,7 +73,7 @@ def article_list_create(request):
         '- **DELETE** — Remove article. Authentication required.\n\n'
         '**curl GET example:**\n'
         '```bash\n'
-        'curl https://xenohuru-o7ix53tg.b4a.run/api/v1/blog/best-time-to-visit-serengeti/\n'
+        'curl https://159.65.119.182:8000/api/v1/blog/best-time-to-visit-serengeti/\n'
         '```'
     ),
     responses={

@@ -8,7 +8,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Open Source Community](https://img.shields.io/badge/Made%20in-Tanzania-green.svg)](#)
 
-**Live API:** https://xenohuru-o7ix53tg.b4a.run/ | **Frontend UI:** https://x.xenohuru.workers.dev/ | **Sponsor Us:** [Ko-fi](https://ko-fi.com/xenohuru)
+**Live API:** https://159.65.119.182:8000/ | **Frontend UI:** https://x.xenohuru.workers.dev/ | **Sponsor Us:** [Ko-fi](https://ko-fi.com/xenohuru)
 
 ---
 
@@ -79,7 +79,7 @@ python src/manage.py runserver
 | `/auth/login/` | POST | User authentication |
 | `/auth/register/` | POST | User registration |
 
-**Full docs:** https://xenohuru-o7ix53tg.b4a.run/ (Swagger)
+**Full docs:** https://159.65.119.182:8000/ (Swagger)
 
 ---
 
